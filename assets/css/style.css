@@ -1,0 +1,11 @@
+header {
+  display: flex;
+  justify-content: space-between;
+  height: 10vh;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+#high-score-page {
+  display: none;
+}
