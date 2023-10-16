@@ -11,16 +11,23 @@ var score = 0;
 var timerText = document.getElementById("timer");
 var time = 100;
 var isGameOver = false;
+var goingAgain = false;
 
 var quizQuestions;
 
 highScoreButton.addEventListener("click", function (event) {
   var state = highScorePage.getAttribute("data-state");
   if (isGameOver) {
-    quizContainer.dataset.state = "show";
+    goingAgain = true;
     quizContainer.style.display = "block";
+    testingThis.style.display = "none";
+    quizTitle.style.display = "block";
+
     highScorePage.style.display = "none";
     highScorePage.dataset.state = "hidden";
+
+    highScoreButton.textContent = "View High Scores";
+    isGameOver = false;
   } else {
     if (state === "hidden") {
       // Showing the High Score container
@@ -51,6 +58,7 @@ highScoreButton.addEventListener("click", function (event) {
 startButton.addEventListener("click", function () {
   // Getting a random question to
   quizTitle.style.display = "none";
+  testingThis.style.display = "grid";
   declareVariables();
   showNextQuestion();
   startTimer();
@@ -63,7 +71,7 @@ function showNextQuestion() {
 
   questionEl.textContent = question;
 
-  if (quizQuestions.length > 3) {
+  if (quizQuestions.length > 3 && !goingAgain) {
     for (var i = 0; i < answers.length; i++) {
       var choiceText = document.createElement("button");
       choiceText.name = "answer";
@@ -156,9 +164,6 @@ function storeUserValues() {
   var highScores = JSON.parse(localStorage.getItem("score"));
   var highScoreNames = JSON.parse(localStorage.getItem("names"));
 
-  console.log("score is " + score);
-  console.log("name is " + username);
-
   highScoreNames[highScoreNames.length] = username;
   highScores[highScores.length] = score;
 
@@ -183,10 +188,13 @@ var storedNames = [];
 var storedScores = [];
 
 function setHighScores() {
+  var scoreContainerEl = document.createElement("div");
   for (var i = 0; i < storedNames.length; i++) {
     var scoreEl = document.createElement("li");
+    scoreEl.setAttribute("class", "highScoresText" + i);
     scoreEl.textContent = storedNames[i] + ": " + storedScores[i];
-    highScorePage.appendChild(scoreEl);
+    scoreContainer.appendChild(scoreEl);
+    highScorePage.appendChild(scoreContainer);
   }
 }
 
@@ -236,3 +244,6 @@ function declareVariables() {
     },
   ];
 }
+
+init();
+setHighScores();
