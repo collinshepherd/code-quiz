@@ -4,7 +4,8 @@ var quizContainer = document.getElementById("coding-quiz");
 var questionEl = document.getElementById("question");
 var startButton = document.getElementById("start-button");
 var quizTitle = document.getElementById("quiz-title");
-var testingThis = document.getElementById("quiz-questions");
+var quizQuestionsEl = document.getElementById("quiz-questions");
+var resetScoresButton = document.getElementById("reset-scores");
 
 var randomInt = 0;
 var score = 0;
@@ -15,12 +16,17 @@ var goingAgain = false;
 
 var quizQuestions;
 
+resetScoresButton.addEventListener("click", function () {
+  localStorage.clear();
+  document.querySelectorAll("#high-score-page li").forEach((el) => el.remove());
+});
+
 highScoreButton.addEventListener("click", function (event) {
   var state = highScorePage.getAttribute("data-state");
   if (isGameOver) {
     goingAgain = true;
     quizContainer.style.display = "block";
-    testingThis.style.display = "none";
+    quizQuestionsEl.style.display = "none";
     quizTitle.style.display = "block";
 
     highScorePage.style.display = "none";
@@ -58,7 +64,7 @@ highScoreButton.addEventListener("click", function (event) {
 startButton.addEventListener("click", function () {
   // Getting a random question to
   quizTitle.style.display = "none";
-  testingThis.style.display = "grid";
+  quizQuestionsEl.style.display = "grid";
   declareVariables();
   showNextQuestion();
   startTimer();
@@ -78,7 +84,7 @@ function showNextQuestion() {
       choiceText.value = i;
       choiceText.textContent = answers[i].text;
       choiceText.setAttribute("id", "answer" + i);
-      testingThis.appendChild(choiceText);
+      quizQuestionsEl.appendChild(choiceText);
     }
   } else {
     for (var i = 0; i < answers.length; i++) {
@@ -88,19 +94,17 @@ function showNextQuestion() {
   }
 }
 
-testingThis.addEventListener("click", function (event) {
+quizQuestionsEl.addEventListener("click", function (event) {
   var selectedAns = event.target;
 
   if (selectedAns.matches("button")) {
     if (quizQuestions[randomInt].answers[selectedAns.value].isCorrect) {
       score++;
-      console.log(score);
       if (quizQuestions.length > 1) {
         minusQuestion();
         showNextQuestion();
       } else {
         gameOver();
-        console.log("This will be an game-over function");
       }
     } else {
       time = time - 10;
@@ -161,16 +165,14 @@ function gameOver() {
 function storeUserValues() {
   var username = window.prompt("Enter your first and last name (first last)");
 
-  var highScores = JSON.parse(localStorage.getItem("score"));
-  var highScoreNames = JSON.parse(localStorage.getItem("names"));
+  var highScores = JSON.parse(localStorage.getItem("score")) ?? [];
+  var highScoreNames = JSON.parse(localStorage.getItem("names")) ?? [];
 
   highScoreNames[highScoreNames.length] = username;
   highScores[highScores.length] = score;
 
   localStorage.setItem("score", JSON.stringify(highScores));
   localStorage.setItem("names", JSON.stringify(highScoreNames));
-
-  console.log(JSON.parse(localStorage.getItem("score")));
 }
 
 function init() {
@@ -188,13 +190,15 @@ var storedNames = [];
 var storedScores = [];
 
 function setHighScores() {
+  document.querySelectorAll("#high-score-page li").forEach((el) => el.remove());
+
   var scoreContainerEl = document.createElement("div");
   for (var i = 0; i < storedNames.length; i++) {
     var scoreEl = document.createElement("li");
     scoreEl.setAttribute("class", "highScoresText" + i);
     scoreEl.textContent = storedNames[i] + ": " + storedScores[i];
-    scoreContainer.appendChild(scoreEl);
-    highScorePage.appendChild(scoreContainer);
+    scoreContainerEl.appendChild(scoreEl);
+    highScorePage.appendChild(scoreContainerEl);
   }
 }
 

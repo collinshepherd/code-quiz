@@ -36,8 +36,13 @@ header {
   grid-column: 1 / 4;
 }
 
-.test {
+#start-button {
+  color: red;
+  font-size: 2em;
 }
 
-#answers {
+#reset-scores {
+  color: red;
+  font-size: 1.5em;
+  margin-bottom: 10px;
 }
